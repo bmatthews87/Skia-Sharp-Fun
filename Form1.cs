@@ -13,8 +13,8 @@ namespace Plasma_Test
         int hValue = 0;
         int sValue = 20;
         bool isDesc = false;
-        int screenHeight = 0;
-        int screenWidth = 0;
+        int windowHeight = 768;
+        int windowWidth = 1024;
         int currentMouseX;
         int currentMouseY;
 
@@ -33,13 +33,10 @@ namespace Plasma_Test
         private void SetupWindow()
         {
             this.FormBorderStyle = FormBorderStyle.Sizable;
-            this.WindowState = FormWindowState.Maximized;
-
-            screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
-            screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
+            this.Size = new Size(windowWidth, windowHeight);
 
             skglControl1.Location = new Point(0, 0);
-            skglControl1.Size = new Size(screenWidth, screenHeight);
+            skglControl1.Size = new Size(windowWidth, windowHeight);
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -51,10 +48,26 @@ namespace Plasma_Test
         {
             e.Surface.Canvas.Clear(SKColor.FromHsl(hValue, sValue, 0));
 
-            //SwapBackground(sender, e);
-            DrawTriangle(sender, e);
-            //RandomLines(sender, e);
+
+            //DrawTriangle(sender, e);
+            DrawPixels(sender, e);
             DisplayMouseCoordinates(sender, e);
+            //SwapBackground(sender, e);
+            //RandomLines(sender, e);
+        }
+
+        private void DrawPixels(object sender, SKPaintGLSurfaceEventArgs e)
+        {
+            int numPoints = 100000;
+
+            var buffer = new SKPoint[numPoints];
+
+            for (int i = 0; i < numPoints; i++)
+            {
+                buffer[i] = new SKPoint(rand.Next(this.Width), rand.Next(this.Height));
+            }
+
+            e.Surface.Canvas.DrawPoints(SKPointMode.Points, buffer, new SKPaint() { Color = new SKColor((byte)255, (byte)255, (byte)255) });
         }
 
         private void DisplayMouseCoordinates(object sender, SKPaintGLSurfaceEventArgs e)
@@ -64,7 +77,7 @@ namespace Plasma_Test
 
             string MouseCoordText = @"X: " + currentMouseX.ToString() + " | Y: " + currentMouseY.ToString();
 
-            e.Surface.Canvas.DrawText(MouseCoordText, new SKPoint(0, screenHeight - 30), paint);
+            e.Surface.Canvas.DrawText(MouseCoordText, new SKPoint(0, windowHeight - 50), paint);
         }
 
         private void DrawTriangle(object sender, SKPaintGLSurfaceEventArgs e)
