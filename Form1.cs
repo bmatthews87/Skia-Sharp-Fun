@@ -3,6 +3,7 @@ using SkiaSharp.Views.Desktop;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Plasma_Test
 {
@@ -13,8 +14,8 @@ namespace Plasma_Test
         int hValue = 0;
         int sValue = 20;
         bool isDesc = false;
-        int windowHeight = 768;
-        int windowWidth = 1024;
+        int windowHeight = 500;
+        int windowWidth = 500;
         int currentMouseX;
         int currentMouseY;
 
@@ -49,25 +50,34 @@ namespace Plasma_Test
             e.Surface.Canvas.Clear(SKColor.FromHsl(hValue, sValue, 0));
 
 
+            DrawPlasma(sender, e);
+            //DisplayMouseCoordinates(sender, e);
             //DrawTriangle(sender, e);
-            DrawPixels(sender, e);
-            DisplayMouseCoordinates(sender, e);
             //SwapBackground(sender, e);
             //RandomLines(sender, e);
         }
 
-        private void DrawPixels(object sender, SKPaintGLSurfaceEventArgs e)
+        private void DrawPlasma(object sender, SKPaintGLSurfaceEventArgs e)
         {
-            int numPoints = 100000;
-
-            var buffer = new SKPoint[numPoints];
-
-            for (int i = 0; i < numPoints; i++)
+            for (int i = 0; i < this.Width; i++)
             {
-                buffer[i] = new SKPoint(rand.Next(this.Width), rand.Next(this.Height));
+                for (int j = 0; j < this.Height; j++)
+                {
+                    e.Surface.Canvas.DrawPoint(new SKPoint(i, j), GetPlasmaColor(i, j));
+                }
             }
+        }
 
-            e.Surface.Canvas.DrawPoints(SKPointMode.Points, buffer, new SKPaint() { Color = new SKColor((byte)255, (byte)255, (byte)255) });
+        private SKColor GetPlasmaColor(int x, int y)
+        {
+            double plasmaValue = 
+                Math.Sin(x * 0.05 + DateTime.Now.Second * 0.1) +
+                Math.Sin(y * 0.03 + DateTime.Now.Second * 0.05) +
+                Math.Sin((x + y) * 0.04 + DateTime.Now.Second * 0.08);
+
+            SKColor color = new SKColor((byte)0, (byte)0, (byte)(plasmaValue * (255 - 1)));
+
+            return color;
         }
 
         private void DisplayMouseCoordinates(object sender, SKPaintGLSurfaceEventArgs e)
