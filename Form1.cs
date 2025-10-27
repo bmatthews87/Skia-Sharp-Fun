@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using Models;
+using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System;
 using System.Drawing;
@@ -14,10 +15,11 @@ namespace Plasma_Test
         int hValue = 0;
         int sValue = 20;
         bool isDesc = false;
-        int windowHeight = 500;
-        int windowWidth = 500;
+        int windowHeight = 200;
+        int windowWidth = 200;
         int currentMouseX;
         int currentMouseY;
+        Pixel[,] buffer;
 
         public Form1()
         {
@@ -29,6 +31,18 @@ namespace Plasma_Test
             timer.Tick += Timer_Tick;
             timer.Interval = 1;
             timer.Start();
+
+
+            //store initial screen pixels
+            buffer = new Pixel[this.Width, this.Height];
+
+            for (int i = 0; i < this.Width; i++)
+            {
+                for (int j = 0; j < this.Height; j++)
+                {
+                    buffer[i, j] = new Pixel() { point = new SKPoint(i, j), color = new SKColor(255) };
+                }
+            }
         }
 
         private void SetupWindow()
@@ -63,14 +77,17 @@ namespace Plasma_Test
             {
                 for (int j = 0; j < this.Height; j++)
                 {
-                    e.Surface.Canvas.DrawPoint(new SKPoint(i, j), GetPlasmaColor(i, j));
+                    buffer[i, j].color = GetPlasmaColor(i, j);
+                    e.Surface.Canvas.DrawPoint(buffer[i, j].point, buffer[i, j].color);
+
+                    //e.Surface.Canvas.DrawPoint(new SKPoint(i, j), GetPlasmaColor(i, j)); //benchmark just this piece
                 }
             }
         }
 
         private SKColor GetPlasmaColor(int x, int y)
         {
-            double plasmaValue = 
+            double plasmaValue =
                 Math.Sin(x * 0.05 + DateTime.Now.Second * 0.1) +
                 Math.Sin(y * 0.03 + DateTime.Now.Second * 0.05) +
                 Math.Sin((x + y) * 0.04 + DateTime.Now.Second * 0.08);
