@@ -19,7 +19,7 @@ namespace Plasma_Test
         int windowWidth = 200;
         int currentMouseX;
         int currentMouseY;
-        Pixel[,] buffer;
+        SKBitmap screen;
 
         public Form1()
         {
@@ -34,15 +34,7 @@ namespace Plasma_Test
 
 
             //store initial screen pixels
-            buffer = new Pixel[this.Width, this.Height];
-
-            for (int i = 0; i < this.Width; i++)
-            {
-                for (int j = 0; j < this.Height; j++)
-                {
-                    buffer[i, j] = new Pixel() { point = new SKPoint(i, j), color = new SKColor(255) };
-                }
-            }
+            screen = new SKBitmap(windowWidth, windowHeight);
         }
 
         private void SetupWindow()
@@ -73,16 +65,15 @@ namespace Plasma_Test
 
         private void DrawPlasma(object sender, SKPaintGLSurfaceEventArgs e)
         {
-            for (int i = 0; i < this.Width; i++)
+            for (int x = 0; x < windowWidth; x++)
             {
-                for (int j = 0; j < this.Height; j++)
+                for (int y = 0; y < windowHeight; y++)
                 {
-                    buffer[i, j].color = GetPlasmaColor(i, j);
-                    e.Surface.Canvas.DrawPoint(buffer[i, j].point, buffer[i, j].color);
-
-                    //e.Surface.Canvas.DrawPoint(new SKPoint(i, j), GetPlasmaColor(i, j)); //benchmark just this piece
+                    screen.SetPixel(x, y, GetPlasmaColor(x, y));
                 }
             }
+
+            e.Surface.Canvas.DrawBitmap(screen, new SKPoint(0, 0));
         }
 
         private SKColor GetPlasmaColor(int x, int y)
