@@ -4,6 +4,7 @@ using SkiaSharp.Views.Desktop;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Plasma_Test
@@ -15,8 +16,8 @@ namespace Plasma_Test
         int hValue = 0;
         int sValue = 20;
         bool isDesc = false;
-        int windowHeight = 200;
-        int windowWidth = 200;
+        int windowHeight = 500;
+        int windowWidth = 500;
         int currentMouseX;
         int currentMouseY;
         SKBitmap screen;
