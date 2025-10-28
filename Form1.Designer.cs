@@ -40,7 +40,6 @@
             this.skglControl1.TabIndex = 0;
             this.skglControl1.VSync = false;
             this.skglControl1.PaintSurface += new System.EventHandler<SkiaSharp.Views.Desktop.SKPaintGLSurfaceEventArgs>(this.skglControl1_PaintSurface);
-            this.skglControl1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.skglControl1_MouseMove);
             // 
             // Form1
             // 
