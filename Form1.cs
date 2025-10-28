@@ -8,10 +8,13 @@ namespace Plasma_Test
 {
     public partial class Form1 : Form
     {
-        int windowHeight = 500;
+        int windowHeight = 300;
         int windowWidth = 500;
-        SKBitmap screen;
 
+        int skWindowHeight = 300;
+        int skWindowWidth = 300;      
+        SKBitmap screen;
+        IntPtr pixelsPtr;
         public Form1()
         {
             InitializeComponent();
@@ -24,7 +27,8 @@ namespace Plasma_Test
             timer.Start();
 
             //store initial screen pixels
-            screen = new SKBitmap(windowWidth, windowHeight);
+            screen = new SKBitmap(skWindowWidth, skWindowHeight);
+            pixelsPtr = screen.GetPixels();
         }
 
         private void SetupWindow()
@@ -33,7 +37,7 @@ namespace Plasma_Test
             this.Size = new Size(windowWidth, windowHeight);
 
             skglControl1.Location = new Point(0, 0);
-            skglControl1.Size = new Size(windowWidth, windowHeight);
+            skglControl1.Size = new Size(skWindowWidth, skWindowHeight);
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -50,35 +54,49 @@ namespace Plasma_Test
 
         private void DrawPlasma(object sender, SKPaintGLSurfaceEventArgs e)
         {
-            IntPtr pixelsPtr = screen.GetPixels();
-
             //write directly to buffer
             unsafe
             {
-                for (int x = 0; x < windowWidth; x++)
+                for (int x = 0; x < skWindowWidth; x++)
                 {
-                    for (int y = 0; y < windowHeight; y++)
+                    for (int y = 0; y < skWindowHeight; y++)
                     {
                         uint* pixelData = (uint*)pixelsPtr;
                         pixelData[y * screen.Width + x] = (uint)GetPlasmaColor(x, y);
                         //screen.SetPixel(x, y, GetPlasmaColor(x, y));
                     }
                 }
-
                 e.Surface.Canvas.DrawBitmap(screen, new SKPoint(0, 0));
             }
         }
 
         private SKColor GetPlasmaColor(int x, int y)
         {
+            int now = DateTime.Now.Millisecond;
+
+            //double plasmaValue =
+            //    Math.Sin(x * 0.05 + now * 0.1) +
+            //    Math.Sin(y * 0.03 + now * 0.05) +
+            //    Math.Sin((x + y) * 0.04 + now * 0.08);
+
             double plasmaValue =
-                Math.Sin(x * 0.05 + DateTime.Now.Second * 0.1) +
-                Math.Sin(y * 0.03 + DateTime.Now.Second * 0.05) +
-                Math.Sin((x + y) * 0.04 + DateTime.Now.Second * 0.08);
+                Math.Sin(x * (hScrollBar1.Value / 100) + now * 0.1) +
+                Math.Sin(y * hScrollBar1.Value + now * 0.05) +
+                Math.Sin((x + y) * 0.04 + now * 0.08);
 
             SKColor color = new SKColor((byte)0, (byte)0, (byte)(plasmaValue * (255 - 1)));
 
             return color;
+        }
+
+        private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        {
+
+        }
+
+        private void hScrollBar1_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
