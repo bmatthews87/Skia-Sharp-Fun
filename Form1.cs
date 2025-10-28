@@ -82,7 +82,7 @@ namespace Plasma_Test
             double plasmaValue =
                 Math.Sin(x * (hScrollBar1.Value / 100) + now * 0.1) +
                 Math.Sin(y * hScrollBar1.Value + now * 0.05) +
-                Math.Sin((x + y) * 0.04 + now * 0.08);
+                Math.Sin((x + y) * 0.04 + now * hScrollBar1.Value);
 
             SKColor color = new SKColor((byte)0, (byte)0, (byte)(plasmaValue * (255 - 1)));
 
