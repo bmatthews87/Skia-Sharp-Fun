@@ -1,6 +1,7 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -10,25 +11,26 @@ namespace Plasma_Test
     {
         int windowHeight = 300;
         int windowWidth = 500;
-
         int skWindowHeight = 300;
-        int skWindowWidth = 300;      
+        int skWindowWidth = 300;
         SKBitmap screen;
+        int frameCounter = 0;
         IntPtr pixelsPtr;
+
         public Form1()
         {
             InitializeComponent();
-
             SetupWindow();
 
             Timer timer = new Timer();
             timer.Tick += Timer_Tick;
-            timer.Interval = 1;
+            timer.Interval = 33;
             timer.Start();
 
             //store initial screen pixels
             screen = new SKBitmap(skWindowWidth, skWindowHeight);
             pixelsPtr = screen.GetPixels();
+            hScrollBar1.Value = 44;
         }
 
         private void SetupWindow()
@@ -42,6 +44,7 @@ namespace Plasma_Test
 
         private void Timer_Tick(object sender, EventArgs e)
         {
+            frameCounter++;
             skglControl1.Invalidate();
         }
 
@@ -72,31 +75,14 @@ namespace Plasma_Test
 
         private SKColor GetPlasmaColor(int x, int y)
         {
-            int now = DateTime.Now.Millisecond;
-
-            //double plasmaValue =
-            //    Math.Sin(x * 0.05 + now * 0.1) +
-            //    Math.Sin(y * 0.03 + now * 0.05) +
-            //    Math.Sin((x + y) * 0.04 + now * 0.08);
-
             double plasmaValue =
-                Math.Sin(x * (hScrollBar1.Value / 100) + now * 0.1) +
-                Math.Sin(y * hScrollBar1.Value + now * 0.05) +
-                Math.Sin((x + y) * 0.04 + now * hScrollBar1.Value);
+                Math.Sin(x * (0.05 / 100) + frameCounter * 0.1) +
+                Math.Sin(y * hScrollBar1.Value + frameCounter * 0.05) +
+                Math.Sin((x + y) * 0.04 + frameCounter * hScrollBar1.Value);
 
-            SKColor color = new SKColor((byte)0, (byte)0, (byte)(plasmaValue * (255 - 1)));
+            SKColor color = new SKColor((byte)(byte)(plasmaValue * (255 - 1)), (byte)(plasmaValue * (30 - 1)), (byte)(plasmaValue * (200 - 1)));
 
             return color;
-        }
-
-        private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
-        {
-
-        }
-
-        private void hScrollBar1_ValueChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
