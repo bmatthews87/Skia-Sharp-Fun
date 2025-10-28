@@ -33,7 +33,6 @@ namespace Plasma_Test
             timer.Interval = 1;
             timer.Start();
 
-
             //store initial screen pixels
             screen = new SKBitmap(windowWidth, windowHeight);
         }
@@ -56,7 +55,6 @@ namespace Plasma_Test
         {
             e.Surface.Canvas.Clear(SKColor.FromHsl(hValue, sValue, 0));
 
-
             DrawPlasma(sender, e);
             //DisplayMouseCoordinates(sender, e);
             //DrawTriangle(sender, e);
@@ -66,15 +64,23 @@ namespace Plasma_Test
 
         private void DrawPlasma(object sender, SKPaintGLSurfaceEventArgs e)
         {
-            for (int x = 0; x < windowWidth; x++)
-            {
-                for (int y = 0; y < windowHeight; y++)
-                {
-                    screen.SetPixel(x, y, GetPlasmaColor(x, y));
-                }
-            }
+            IntPtr pixelsPtr = screen.GetPixels();
 
-            e.Surface.Canvas.DrawBitmap(screen, new SKPoint(0, 0));
+            //write directly to buffer
+            unsafe
+            {
+                for (int x = 0; x < windowWidth; x++)
+                {
+                    for (int y = 0; y < windowHeight; y++)
+                    {
+                        uint* pixelData = (uint*)pixelsPtr;
+                        pixelData[y * screen.Width + x] = (uint)GetPlasmaColor(x, y);
+                        //screen.SetPixel(x, y, GetPlasmaColor(x, y));
+                    }
+                }
+
+                e.Surface.Canvas.DrawBitmap(screen, new SKPoint(0, 0));
+            }
         }
 
         private SKColor GetPlasmaColor(int x, int y)
